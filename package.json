@@ -1,0 +1,42 @@
+{
+  "name": "marklogic-connector",
+  "version": "0.0.1",
+  "description": "JSONiq Connector for MarkLogic",
+  "main": "index.js",
+  "scripts": {
+    "test": "gulp"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/28msec/marklogic-connector.git"
+  },
+  "keywords": [
+    "jsoniq",
+    "xquery",
+    "nosql",
+    "marklogic"
+  ],
+  "author": "William Candillon",
+  "license": "Apache 2",
+  "bugs": {
+    "url": "https://github.com/28msec/marklogic-connector/issues"
+  },
+  "homepage": "https://github.com/28msec/marklogic-connector",
+  "devDependencies": {
+    "28": "^1.9.1",
+    "glob-expand": "^0.1.0",
+    "gulp": "^3.8.11",
+    "gulp-jshint": "^1.10.0",
+    "gulp-jsonlint": "^1.0.2",
+    "gulp-load-plugins": "^0.10.0",
+    "gulp-shell": "^0.4.1",
+    "gulp-util": "^3.0.4",
+    "jshint-stylish": "^1.0.1",
+    "lodash": "^3.7.0",
+    "map-stream": "0.0.5",
+    "minimist": "^1.1.1",
+    "q": "^1.2.0",
+    "run-sequence": "^1.0.2",
+    "xqlint": "^0.2.8"
+  }
+}
