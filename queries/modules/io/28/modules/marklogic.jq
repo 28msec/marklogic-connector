@@ -5,7 +5,7 @@ import module namespace http = "http://zorba.io/modules/http-client";
 
 declare %private variable $ml:category as string := "MarkLogic";
 
-declare %private variable $ml:UNSUPPORTED_BODY as QName := QName('ml:UNSUPPORTED_BODY');
+declare %private variable $ml:UNSUPPORTED_BODY as QName := QName("ml:UNSUPPORTED_BODY");
 
 declare %an:sequential %private function ml:send-request($name as string, $uri as string) as string {
     ml:send-request($name, "GET", $uri, ())
@@ -45,13 +45,13 @@ declare %an:sequential %private function ml:send-request($name as string, $metho
     |})
 };
 
-declare function ml:put-document($name as string, $uri as string, $document as object)
+declare %an:sequential function ml:put-document($name as string, $uri as string, $document as object)
 as empty-sequence()
 {
     ml:send-request($name, "PUT", $uri, $document)
 };
 
-declare function ml:get-document($name as string, $uri as string)
+declare %an:sequential function ml:get-document($name as string, $uri as string)
 as object()
 {
     ml:send-request($name, "GET", $uri)
