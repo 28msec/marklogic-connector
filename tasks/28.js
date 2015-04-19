@@ -9,6 +9,7 @@ var $ = require('gulp-load-plugins')();
 var VFS = require('28').VFS;
 var _ = require('lodash');
 var minimist = require('minimist');
+var runSequence = require('run-sequence');
 
 var Config = require('./config');
 
@@ -350,7 +351,7 @@ var createOrUpdateDatasources = function(existingDataSources){
     return Q.all(promises);
 };
 
-gulp.task('28:login', ['config'], function(){
+gulp.task('28:login', ['config:load'], function(){
     return login(Config.credentials['28'].email, Config.credentials['28'].password).catch(throwError);
 });
 
@@ -379,11 +380,11 @@ gulp.task('28:init', function(){
 });
 
 gulp.task('28:setup', ['28:login'], function(done){
-    $.runSequence('28:remove-project', '28:create-project', ['28:setup-datasources', '28:upload'], '28:init', '28:test', done);
+    runSequence('28:remove-project', '28:create-project', ['28:setup-datasources', '28:upload'], '28:init', '28:test', done);
 });
 
 gulp.task('28:teardown', function(done){
-    $.runSequence('28:login', '28:remove-project', done);
+    runSequence('28:login', '28:remove-project', done);
 });
 
 gulp.task('28:test', function(){
