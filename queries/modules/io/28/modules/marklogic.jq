@@ -35,7 +35,7 @@ declare %an:sequential %private function ml:send-request($name as string, $metho
                           typeswitch($body)
                           case json-item return {
                               "media-type" : "application/json;charset=UTF-8",
-                              "content" : $body
+                              "content" : serialize($body)
                           }
                           default return error($ml:UNSUPPORTED_BODY)
                     |}

@@ -25,10 +25,14 @@ var config = {
     paths: {
         encryptedConfigFile: encryptedConfigFile,
         unencryptedConfigFile: unencryptedConfigFile,
+
         json: ['*.json'],
         tasks: ['gulpfile.js', 'tasks/**/*.js'],
         queries: 'queries',
-        jsoniq: ['queries/**/*.xq', 'queries/**/*.jq']
+        jsoniq: ['queries/**/*.xq', 'queries/**/*.jq'],
+
+        initQueries: [],
+        apiTestQueries: ['queries/public/tests/*.jq']
     }
 };
 
