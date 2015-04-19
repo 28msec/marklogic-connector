@@ -39,13 +39,10 @@ gulp.task('config:load', ['crypt:decrypt'], function(){
     config.credentials = JSON.parse(fs.readFileSync(config.paths.unencryptedConfigFile, 'utf-8'));
     config.projectName = 'ml-' + buildId;
 
-    // where to deploy the cellstore?
-    config.portalAPIUrl = _.template('<%= portal.protocol %>://<%= portal.project %>.<%= portal.domain %><%= portal.apiPrefix %>')(config.credentials['28']);
-
-    $.util.log('Portal: ' + $.util.colors.green(config.portalAPIUrl));
+    $.util.log('Portal: ' + $.util.colors.green(config.credentials['28'].portal));
     $.util.log('Project: ' + $.util.colors.green(config.projectName));
 
-    config.$28 = new (require('28').$28)(config.portalAPIUrl);
+    config.$28 = new (require('28').$28)(config.credentials['28'].portal);
 });
 
 module.exports = config;
