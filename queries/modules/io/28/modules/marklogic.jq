@@ -1,11 +1,14 @@
 module namespace ml = "http://28.io/modules/marklogic";
 
-import module namespace credentials = "http://www.28msec.com/modules/credentials";
-import module namespace http = "http://zorba.io/modules/http-client";
+import module namespace credentials =
+    "http://www.28msec.com/modules/credentials";
+import module namespace http =
+    "http://zorba.io/modules/http-client";
 
 declare %private variable $ml:category as string := "MarkLogic";
 
-declare %private variable $ml:UNSUPPORTED_BODY as QName := QName("ml:UNSUPPORTED_BODY");
+declare %private variable $ml:UNSUPPORTED_BODY as QName :=
+    QName("ml:UNSUPPORTED_BODY");
 
 declare %an:sequential %private function ml:send-request(
         $name as string,
@@ -44,8 +47,10 @@ declare %an:sequential %private function ml:send-request(
                       if(exists($url-parameters))
                       then "?" ||
                         string-join(for $parameter in keys($url-parameters)
-                                    for $value as string in flatten($url-parameters.$parameter)
-                                    return $parameter || ":" || encode-for-uri($value),
+                                    for $value as string in
+                                        flatten($url-parameters.$parameter)
+                                    return $parameter || ":" ||
+                                           encode-for-uri($value),
                                     "&")
                       else ""
                   ),
@@ -74,19 +79,27 @@ declare %an:sequential %private function ml:send-request(
     |})
 };
 
-declare %an:sequential function ml:put-document($name as string, $uri as string, $document as object)
+declare %an:sequential function ml:put-document(
+    $name as string,
+    $uri as string,
+ $document as object)
 as empty-sequence()
 {
     ml:send-request($name, "documents", "PUT", { uri: $uri }, $document)
 };
 
-declare %an:sequential function ml:get-document($name as string, $uri as string)
+declare %an:sequential function ml:get-document(
+    $name as string,
+    $uri as string)
 as object()
 {
     ml:send-request($name, "documents", "GET", { uri: $uri })
 };
 
-declare %an:sequential function ml:qbe($name as string, $collection as string, $query as object)
+declare %an:sequential function ml:qbe(
+    $name as string,
+    $collection as string,
+    $query as object)
 as object()
 {
     ml:send-request($name, "qbe", "GET", { collection: $collection }, $query)
