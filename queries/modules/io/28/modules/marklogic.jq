@@ -10,10 +10,10 @@ declare %private variable $ml:category as string := "MarkLogic";
 declare %private variable $ml:UNSUPPORTED_BODY as QName :=
     QName("ml:UNSUPPORTED_BODY");
 
-declare %an:sequential %private function ml:send-request(
+declare %an:nondeterministic %private function ml:send-nondeterministic-request(
         $name as string,
         $endpoint as string) as string {
-    ml:send-request($name, $endpoint, "GET", (), ())
+    ml:send-nondeterministic-request($name, $endpoint, "GET", (), ())
 };
 
 declare %an:sequential %private function ml:send-request(
@@ -31,6 +31,15 @@ declare %an:sequential %private function ml:send-request(
     ml:send-request($name, $endpoint, $method, $url-parameters, ())
 };
 
+declare %an:nondeterministic %private function ml:send-nondeterministic-request(
+      $name as string,
+      $endpoint as string,
+      $method as string,
+      $url-parameters as object) as string {
+    ml:send-nondeterministic-request(
+        $name, $endpoint, $method, $url-parameters, ())
+};
+
 declare %an:sequential %private function ml:send-request(
       $name as string,
       $endpoint as string,
@@ -38,22 +47,22 @@ declare %an:sequential %private function ml:send-request(
       $url-parameters as object?,
       $body as item?) as string {
     let $request :=
-        ml:send-request($name, $endpoint, $method, $url-parameters, $body)
+        ml:request($name, $endpoint, $method, $url-parameters, $body)
     return http:send-request($request)
 };
 
-declare %an:sequential %private function ml:send-nondeterministic-request(
+declare %an:nondeterministic %private function ml:send-nondeterministic-request(
       $name as string,
       $endpoint as string,
       $method as string,
       $url-parameters as object?,
       $body as item?) as string {
     let $request :=
-        ml:send-request($name, $endpoint, $method, $url-parameters, $body)
+        ml:request($name, $endpoint, $method, $url-parameters, $body)
     return http:send-nondeterministic-request($request)
 };
 
-declare %an:sequential %private function ml:request(
+declare %private function ml:request(
       $name as string,
       $endpoint as string,
       $method as string,
@@ -111,7 +120,7 @@ as empty-sequence()
     ml:send-request($name, "documents", "PUT", { uri: $uri }, $document)
 };
 
-declare %an:sequential function ml:get-document(
+declare %an:nondeterministic function ml:get-document(
     $name as string,
     $uri as string)
 as object()
@@ -119,7 +128,7 @@ as object()
     ml:send-nondeterministic-request($name, "documents", "GET", { uri: $uri })
 };
 
-declare %an:sequential function ml:qbe(
+declare %an:nondeterministic function ml:qbe(
     $name as string,
     $collection as string,
     $query as object)
