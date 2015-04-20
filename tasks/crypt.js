@@ -43,7 +43,7 @@ gulp.task('crypt:encrypt', ['crypt:env-check'], function(done){
 gulp.task('crypt:decrypt', ['crypt:env-check'], function(done){
     if(!fs.existsSync(file)) {
         if(fs.existsSync(encryptedFile)){
-            $.runSequence('crypt:decrypt-force', done);
+            runSequence('crypt:decrypt-force', done);
         } else {
             done(msgs.encyptedFileNotFound);
         }
