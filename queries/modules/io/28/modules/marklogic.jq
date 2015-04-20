@@ -7,19 +7,48 @@ declare %private variable $ml:category as string := "MarkLogic";
 
 declare %private variable $ml:UNSUPPORTED_BODY as QName := QName("ml:UNSUPPORTED_BODY");
 
-declare %an:sequential %private function ml:send-request($name as string, $uri as string) as string {
-    ml:send-request($name, "GET", $uri, ())
+declare %an:sequential %private function ml:send-request(
+        $name as string,
+        $endpoint as string) as string {
+    ml:send-request($name, $endpoint, "GET", (), ())
 };
 
-declare %an:sequential %private function ml:send-request($name as string, $method as string, $uri as string) as string {
-    ml:send-request($name, $method, $uri, ())
+declare %an:sequential %private function ml:send-request(
+        $name as string,
+        $endpoint as string,
+        $method as string) as string {
+    ml:send-request($name, $endpoint, $method, (), ())
 };
 
-declare %an:sequential %private function ml:send-request($name as string, $method as string, $uri as string, $body as item?) as string {
+declare %an:sequential %private function ml:send-request(
+      $name as string,
+      $endpoint as string,
+      $method as string,
+      $url-parameters as object) as string {
+    ml:send-request($name, $endpoint, $method, $url-parameters, ())
+};
+declare %an:sequential %private function ml:send-request(
+      $name as string,
+      $endpoint as string,
+      $method as string,
+      $url-parameters as object?,
+      $body as item?) as string {
     let $credentials := credentials:credentials($ml:category, $name)
     return http:send-request({|
         {
-            href: "http://" || $credentials.hostname || ":" || $credentials.port || "/" || $uri,
+            href: "http://" ||
+                  $credentials.hostname || ":" ||
+                  $credentials.port || "/v1/" ||
+                  $endpoint ||
+                  (
+                      if(exists($url-parameters))
+                      then "?" ||
+                        string-join(for $parameter in keys($url-parameters)
+                                    for $value as string in flatten($url-parameters.$parameter)
+                                    return $parameter || ":" || encode-for-uri($value),
+                                    "&")
+                      else ""
+                  ),
             method: $method,
             authentication: {
                 username: $credentials.username,
@@ -48,11 +77,17 @@ declare %an:sequential %private function ml:send-request($name as string, $metho
 declare %an:sequential function ml:put-document($name as string, $uri as string, $document as object)
 as empty-sequence()
 {
-    ml:send-request($name, "PUT", $uri, $document)
+    ml:send-request($name, "documents", "PUT", { uri: $uri }, $document)
 };
 
 declare %an:sequential function ml:get-document($name as string, $uri as string)
 as object()
 {
-    ml:send-request($name, "GET", $uri)
+    ml:send-request($name, "documents", "GET", { uri: $uri })
+};
+
+declare %an:sequential function ml:qbe($name as string, $collection as string, $query as object)
+as object()
+{
+    ml:send-request($name, "qbe", "GET", { collection: $collection }, $query)
 };
