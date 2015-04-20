@@ -114,7 +114,7 @@ declare %private function ml:request(
 declare %an:sequential function ml:put-document(
     $name as string,
     $uri as string,
- $document as object)
+    $document as object)
 as empty-sequence()
 {
     ml:send-request($name, "documents", "PUT", { uri: $uri }, $document)
