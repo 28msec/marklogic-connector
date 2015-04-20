@@ -67,7 +67,7 @@ declare %private function ml:request(
       $endpoint as string,
       $method as string,
       $url-parameters as object?,
-      $body as item?) as string {
+      $body as item?) as object {
     let $credentials := credentials:credentials($ml:category, $name)
     return {|
         {
