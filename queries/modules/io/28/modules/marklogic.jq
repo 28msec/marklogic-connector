@@ -30,14 +30,37 @@ declare %an:sequential %private function ml:send-request(
       $url-parameters as object) as string {
     ml:send-request($name, $endpoint, $method, $url-parameters, ())
 };
+
 declare %an:sequential %private function ml:send-request(
       $name as string,
       $endpoint as string,
       $method as string,
       $url-parameters as object?,
       $body as item?) as string {
+    let $request :=
+        ml:send-request($name, $endpoint, $method, $url-parameters, $body)
+    return http:send-request($request)
+};
+
+declare %an:sequential %private function ml:send-nondeterministic-request(
+      $name as string,
+      $endpoint as string,
+      $method as string,
+      $url-parameters as object?,
+      $body as item?) as string {
+    let $request :=
+        ml:send-request($name, $endpoint, $method, $url-parameters, $body)
+    return http:send-nondeterministic-request($request)
+};
+
+declare %an:sequential %private function ml:request(
+      $name as string,
+      $endpoint as string,
+      $method as string,
+      $url-parameters as object?,
+      $body as item?) as string {
     let $credentials := credentials:credentials($ml:category, $name)
-    return http:send-request({|
+    return {|
         {
             href: "http://" ||
                   $credentials.hostname || ":" ||
@@ -76,7 +99,7 @@ declare %an:sequential %private function ml:send-request(
                 }
             else ()
         |}
-    |})
+    |}
 };
 
 declare %an:sequential function ml:put-document(
@@ -93,7 +116,7 @@ declare %an:sequential function ml:get-document(
     $uri as string)
 as object()
 {
-    ml:send-request($name, "documents", "GET", { uri: $uri })
+    ml:send-nondeterministic-request($name, "documents", "GET", { uri: $uri })
 };
 
 declare %an:sequential function ml:qbe(
@@ -102,5 +125,10 @@ declare %an:sequential function ml:qbe(
     $query as object)
 as object()
 {
-    ml:send-request($name, "qbe", "GET", { collection: $collection }, $query)
+    ml:send-nondeterministic-request(
+        $name,
+        "qbe",
+        "GET",
+        { collection: $collection },
+        $query)
 };
