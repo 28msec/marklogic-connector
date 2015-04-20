@@ -1,4 +1,4 @@
-#JSONiq Connector for MarkLogic
+#JSONiq Connector for MarkLogic [![Circle CI](https://circleci.com/gh/28msec/marklogic-connector.svg?style=svg)](https://circleci.com/gh/28msec/marklogic-connector)
 
 ##Installation
 Use the [28 cli](https://github.com/28msec/28) to setup your MarkLogic data source and deploy your queries.
