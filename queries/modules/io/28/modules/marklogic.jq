@@ -10,6 +10,14 @@ declare %private variable $ml:category as string := "MarkLogic";
 declare %private variable $ml:UNSUPPORTED_BODY as QName :=
     QName("ml:UNSUPPORTED_BODY");
 
+
+declare %an:sequential %private function ml:send-request(
+    $name as string,
+    $endpoint as string
+) as object {
+    ml:send-request($name, $endpoint, "GET", (), ())
+};
+
 declare %an:sequential %private function ml:send-request(
         $name as string,
         $endpoint as string,
@@ -40,6 +48,13 @@ declare %an:nondeterministic %private function ml:send-nondeterministic-request(
         $name as string,
         $endpoint as string) as object {
     ml:send-nondeterministic-request($name, $endpoint, "GET", (), ())
+};
+
+declare %an:nondeterministic %private function ml:send-nondeterministic-request(
+        $name as string,
+        $endpoint as string,
+        $method as string) as object {
+    ml:send-nondeterministic-request($name, $endpoint, $method, (), ())
 };
 
 declare %an:nondeterministic %private function ml:send-nondeterministic-request(
@@ -137,7 +152,7 @@ as object()
     ml:send-nondeterministic-request(
         $name,
         "qbe",
-        "GET",
+        "POST",
         { collection: $collection },
         $query)
 };
