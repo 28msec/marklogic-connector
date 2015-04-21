@@ -15,7 +15,7 @@ declare %private variable $ml:UNSUPPORTED_BODY as QName :=
 declare %an:sequential %private function ml:send-request(
     $name as string,
     $path as string) as object {
-    ml:send-request($name, $path, 'POST', {}, (), {})
+    ml:send-request($name, $path, "POST", {}, (), {})
 };
 
 declare %an:sequential %private function ml:send-request(
