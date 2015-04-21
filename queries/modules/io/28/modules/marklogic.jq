@@ -7,101 +7,121 @@ import module namespace http =
 
 declare %private variable $ml:category as string := "MarkLogic";
 
+declare %private variable $ml:BASE_PATH as string := "/v1";
+
 declare %private variable $ml:UNSUPPORTED_BODY as QName :=
     QName("ml:UNSUPPORTED_BODY");
 
+declare %an:sequential %private function ml:send-request(
+    $name as string,
+    $path as string) as object {
+    ml:send-request($name, $path, 'POST', {}, (), {})
+};
 
 declare %an:sequential %private function ml:send-request(
     $name as string,
-    $endpoint as string
-) as object {
-    ml:send-request($name, $endpoint, "GET", (), ())
+    $path as string,
+    $method as string) as object {
+    ml:send-request($name, $path, $method, {}, (), {})
 };
 
 declare %an:sequential %private function ml:send-request(
-        $name as string,
-        $endpoint as string,
-        $method as string) as object {
-    ml:send-request($name, $endpoint, $method, (), ())
+    $name as string,
+    $path as string,
+    $method as string,
+    $query-parameters as object) as object {
+    ml:send-request($name, $path, $method, $query-parameters, (), {})
+};
+
+declare %an:sequential %private function ml:send-request(
+    $name as string,
+    $path as string,
+    $method as string,
+    $query-parameters as object,
+    $body as item?) as object {
+    ml:send-request($name, $path, $method, $query-parameters, $body, {})
 };
 
 declare %an:sequential %private function ml:send-request(
       $name as string,
-      $endpoint as string,
+      $path as string,
       $method as string,
-      $url-parameters as object) as object {
-    ml:send-request($name, $endpoint, $method, $url-parameters, ())
-};
-
-declare %an:sequential %private function ml:send-request(
-      $name as string,
-      $endpoint as string,
-      $method as string,
-      $url-parameters as object?,
-      $body as item?) as object {
+      $query-parameters as object,
+      $body as item?,
+      $headers as object) as object {
     let $request :=
-        ml:request($name, $endpoint, $method, $url-parameters, $body)
+      ml:request($name, $path, $method, $query-parameters, $body, $headers)
     return http:send-request($request)
 };
 
 declare %an:nondeterministic %private function ml:send-nondeterministic-request(
-        $name as string,
-        $endpoint as string) as object {
-    ml:send-nondeterministic-request($name, $endpoint, "GET", (), ())
-};
-
-declare %an:nondeterministic %private function ml:send-nondeterministic-request(
-        $name as string,
-        $endpoint as string,
-        $method as string) as object {
-    ml:send-nondeterministic-request($name, $endpoint, $method, (), ())
+      $name as string,
+      $path as string) as object {
+    ml:send-nondeterministic-request($name, $path, "GET", {}, (), {})
 };
 
 declare %an:nondeterministic %private function ml:send-nondeterministic-request(
       $name as string,
-      $endpoint as string,
-      $method as string,
-      $url-parameters as object) as object {
-    ml:send-nondeterministic-request(
-        $name, $endpoint, $method, $url-parameters, ())
+      $path as string,
+      $method as string) as object {
+    ml:send-nondeterministic-request($name, $path, $method, {}, (), {})
 };
 
 declare %an:nondeterministic %private function ml:send-nondeterministic-request(
       $name as string,
-      $endpoint as string,
+      $path as string,
       $method as string,
-      $url-parameters as object?,
+      $query-parameters as object) as object {
+    ml:send-nondeterministic-request($name, $path, $method, $query-parameters, (), {})
+};
+
+declare %an:nondeterministic %private function ml:send-nondeterministic-request(
+      $name as string,
+      $path as string,
+      $method as string,
+      $query-parameters as object,
       $body as item?) as object {
+    ml:send-nondeterministic-request($name, $path, $method, $query-parameters, $body, {})
+};
+
+declare %an:nondeterministic %private function ml:send-nondeterministic-request(
+      $name as string,
+      $path as string,
+      $method as string,
+      $query-parameters as object,
+      $body as item?,
+      $headers as object) as object {
     let $request :=
-        ml:request($name, $endpoint, $method, $url-parameters, $body)
+      ml:request($name, $path, $method, $query-parameters, $body, $headers)
     return http:send-nondeterministic-request($request)
 };
 
 declare %private function ml:request(
       $name as string,
-      $endpoint as string,
+      $path as string,
       $method as string,
-      $url-parameters as object?,
-      $body as item?) as object {
+      $query-parameters as object?,
+      $body as item?,
+      $headers as object) as object {
     let $credentials := credentials:credentials($ml:category, $name)
     return {|
         {
             href: "http://" ||
                   $credentials.hostname || ":" ||
-                  $credentials.port || "/v1/" ||
-                  $endpoint ||
-                  (
-                      if(exists($url-parameters))
+                  $credentials.port || $ml:BASE_PATH ||
+                  $path || (
+                      if(exists($query-parameters))
                       then "?" ||
-                        string-join(for $parameter in keys($url-parameters)
+                        string-join(for $parameter in keys($query-parameters)
                                     for $value as string in
-                                        flatten($url-parameters.$parameter)
+                                        flatten($query-parameters.$parameter)
                                     return $parameter || "=" ||
                                            encode-for-uri($value),
                                     "&")
                       else ""
                   ),
             method: $method,
+            headers: $headers,
             authentication: {
                 username: $credentials.username,
                 password: $credentials.password,
@@ -132,7 +152,7 @@ declare %an:sequential function ml:put-document(
     $document as object)
 as empty-sequence()
 {
-    ml:send-request($name, "documents", "PUT", { uri: $uri }, $document);
+    ml:send-request($name, "/documents", "PUT", { uri: $uri }, $document);
 };
 
 declare %an:nondeterministic function ml:get-document(
@@ -140,7 +160,7 @@ declare %an:nondeterministic function ml:get-document(
     $uri as string)
 as object()
 {
-    ml:send-nondeterministic-request($name, "documents", "GET", { uri: $uri })
+    ml:send-nondeterministic-request($name, "/documents", "GET", { uri: $uri })
 };
 
 declare %an:nondeterministic function ml:qbe(
@@ -151,7 +171,7 @@ as object()
 {
     ml:send-nondeterministic-request(
         $name,
-        "qbe",
+        "/qbe",
         "POST",
         { collection: $collection },
         $query)
