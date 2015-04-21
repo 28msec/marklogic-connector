@@ -3,10 +3,8 @@ import module namespace http = "http://zorba.io/modules/http-client";
 declare namespace html = "http://www.w3.org/1999/xhtml";
 
 let $resources := {
-    "/config/resources": ["GET"],
-    "/config/resources/{name}": ["GET", "PUT", "DELETE"],
-    "/eval": ["POST"],
-    "/ext/{directories}": ["GET", "DELETE"]
+    "/documents": ["PATCH", "GET", "POST", "PUT", "DELETE", "HEAD"],
+    "/eval": ["POST"]
 }
 return {
     "swagger": "2.0",
@@ -59,7 +57,18 @@ return {
                                 "in": $in,
                                 "description": normalize-space($parameter/html:td[2]/string()),
                                 "required": $required
-                            }
+                            },
+                            (
+                                if($method eq "POST" or $method eq "PUT") then
+                                    {
+                                        "name": "body",
+                                        "in": "body",
+                                        "description": "Request Payload",
+                                        "required": false
+                                    }
+                                else
+                                    ()
+                            )
                         ]
                     }
                 }
