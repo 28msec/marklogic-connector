@@ -55,37 +55,37 @@ declare %an:sequential %private function ml:send-request(
     return http:send-request($request)
 };
 
-declare %an:nondeterministic %private function ml:send-nondeterministic-request(
+declare %private function ml:send-deterministic-request(
       $name as string,
       $path as string) as object {
     ml:send-nondeterministic-request($name, $path, "GET", (), (), {})
 };
 
-declare %an:nondeterministic %private function ml:send-nondeterministic-request(
+declare %private function ml:send-deterministic-request(
       $name as string,
       $path as string,
       $method as string) as object {
     ml:send-nondeterministic-request($name, $path, $method, (), (), {})
 };
 
-declare %an:nondeterministic %private function ml:send-nondeterministic-request(
+declare %private function ml:send-deterministic-request(
       $name as string,
       $path as string,
       $method as string,
       $query-parameters as object?) as object {
-    ml:send-nondeterministic-request($name, $path, $method, $query-parameters, (), {})
+    ml:send-deterministic-request($name, $path, $method, $query-parameters, (), {})
 };
 
-declare %an:nondeterministic %private function ml:send-nondeterministic-request(
+declare %private function ml:send-deterministic-request(
       $name as string,
       $path as string,
       $method as string,
       $query-parameters as object?,
       $body as item?) as object {
-    ml:send-nondeterministic-request($name, $path, $method, $query-parameters, $body, {})
+    ml:send-deterministic-request($name, $path, $method, $query-parameters, $body, {})
 };
 
-declare %an:nondeterministic %private function ml:send-nondeterministic-request(
+declare %private function ml:send-deterministic-request(
       $name as string,
       $path as string,
       $method as string,
@@ -95,7 +95,7 @@ declare %an:nondeterministic %private function ml:send-nondeterministic-request(
     let $request :=
       ml:request($name, $path, $method, $query-parameters, $body, $headers)
     let $response :=
-      http:send-nondeterministic-request($request)
+      http:send-deterministic-request($request)
     return switch($response.status)
            case 200 return parse-json($response.body.content)
            case 404 return error(QName("ml:NOT_FOUND"), "Not found!")
@@ -161,15 +161,15 @@ as ()
     ml:send-request($name, "/documents", "PUT", { uri: $uri }, $document);
 };
 
-declare %an:nondeterministic function ml:document(
+declare function ml:document(
     $name as string,
     $uri as string)
 as object
 {
-    ml:send-nondeterministic-request($name, "/documents", "GET", { uri: $uri })
+    ml:send-deterministic-request($name, "/documents", "GET", { uri: $uri })
 };
 
-declare %an:nondeterministic function ml:qbe(
+declare function ml:qbe(
     $name as string,
     $collection as string)
 as object*
@@ -177,13 +177,13 @@ as object*
     ml:qbe($name, $collection, {})
 };
 
-declare %an:nondeterministic function ml:qbe(
+declare function ml:qbe(
     $name as string,
     $collection as string,
     $query as object)
 as object*
 {
-    let $response := ml:send-nondeterministic-request(
+    let $response := ml:send-deterministic-request(
         $name,
         "/qbe",
         "POST",
@@ -191,5 +191,5 @@ as object*
         { "$query" : $query },
         { Accept: "application/json" })
     for $href in $response.results[].href
-    return ml:send-nondeterministic-request($name, $href)
+    return ml:send-deterministic-request($name, $href)
 };
