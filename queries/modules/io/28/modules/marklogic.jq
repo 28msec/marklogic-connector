@@ -58,14 +58,14 @@ declare %an:sequential %private function ml:send-request(
 declare %private function ml:send-deterministic-request(
       $name as string,
       $path as string) as object {
-    ml:send-nondeterministic-request($name, $path, "GET", (), (), {})
+    ml:send-deterministic-request($name, $path, "GET", (), (), {})
 };
 
 declare %private function ml:send-deterministic-request(
       $name as string,
       $path as string,
       $method as string) as object {
-    ml:send-nondeterministic-request($name, $path, $method, (), (), {})
+    ml:send-deterministic-request($name, $path, $method, (), (), {})
 };
 
 declare %private function ml:send-deterministic-request(
