@@ -5,4 +5,4 @@ ml:put-document("xbrl", "/example/recipe.json", {
     fromScratch: true,
     ingredients: "The Universe"
 });
-ml:get-document("xbrl", "/example/recipe.json")
+ml:document("xbrl", "/example/recipe.json")
