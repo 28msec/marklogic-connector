@@ -16,7 +16,7 @@
     "nosql",
     "marklogic"
   ],
-  "author": "William Candillon",
+  "author": "28msec <hello@28.io> (http://28.io)",
   "license": "Apache 2",
   "bugs": {
     "url": "https://github.com/28msec/marklogic-connector/issues"

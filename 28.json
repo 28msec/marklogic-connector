@@ -1,0 +1,7 @@
+{
+  "name": "marklogic-connector",
+  "engines": {
+    "28.io": ">=4.1.0"
+  },
+  "exports": ["http://28.io/modules/marklogic"]
+}
