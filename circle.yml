@@ -9,8 +9,3 @@ test:
     - gulp setup --build-id="ml-$CIRCLE_BUILD_NUM"
   post:
     - gulp teardown --build-id="ml-$CIRCLE_BUILD_NUM"
-deployment:
-  production:
-    branch: master
-    commands:
-      - npm publish
