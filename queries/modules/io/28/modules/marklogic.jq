@@ -142,7 +142,7 @@ declare %private function ml:response(
     let $media := $response.body("media-type")
     return
         if(contains($media, "json")) then
-            parse-json($response)
+            parse-json($response.body.content)
         else if(contains($media, "multipart")) then
             ml:parse-sequence(base64:decode($response.body.content), $response.headers("Content-Type"))
         else
@@ -174,7 +174,7 @@ declare %private function ml:request(
                       else ""
                   ),
             method: $method,
-            headers: $headers,
+            headers: if($headers) then $headers else {},
             authentication: {
                 username: $credentials.username,
                 password: $credentials.password,
@@ -241,6 +241,7 @@ as object*
         { collection: $collection },
         { "$query" : $query },
         { Accept: "application/json" })
+    let $response := trace($response, "$response")
     for $href in $response.results[].href
     return ml:send-deterministic-request($name, $href)
 };
