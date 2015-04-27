@@ -246,7 +246,7 @@ as object*
     return ml:send-deterministic-request($name, $href)
 };
 
-declare %an:sequential function ml:count(
+declare function ml:count(
     $name as string,
     $collection as string
 ) as integer {
