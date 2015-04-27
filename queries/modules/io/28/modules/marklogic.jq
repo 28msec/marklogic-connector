@@ -193,3 +193,24 @@ as object*
     for $href in $response.results[].href
     return ml:send-deterministic-request($name, $href)
 };
+
+declare function ml:count(
+    $name as string,
+    $collection as string
+) as integer {
+    ml:simple-eval($name, "count(\"" || $collection || "\")");
+};
+
+declare function ml:simple-query(
+    $name as string,
+    $query as string
+) as object* {
+    ml:send-deterministic-request($name, "/eval", { xquery: $query })
+};
+
+declare %an:sequential function ml:query(
+    $name as string,
+    $query as string
+) as object* {
+    ml:send-request($name, "/eval", { xquery: $query })
+};
