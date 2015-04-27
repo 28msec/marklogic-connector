@@ -1,3 +1,3 @@
 import module namespace ml = "http://28.io/modules/marklogic";
 
-ml:count("xbrl", "facts")
+ml:simple-query("xbrl", "(1 to 20) ! 'hello'")
