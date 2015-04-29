@@ -167,7 +167,7 @@ declare %private function ml:request(
                       then "?" ||
                         string-join(for $parameter in keys($query-parameters)
                                     for $value as string in
-                                        flatten($query-parameters.$parameter)
+                                        flatten($query-parameters.$parameter) ! string($$)
                                     return $parameter || "=" ||
                                            encode-for-uri($value),
                                     "&")
