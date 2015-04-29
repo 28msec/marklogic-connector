@@ -1,10 +1,8 @@
-jsoniq version "1.0";
 module namespace ml = "http://28.io/modules/marklogic";
 
-import module namespace base64 =
-    "http://zorba.io/modules/base64";
 import module namespace http =
-    "http://zorba.io/modules/http-client";
+    "http://28.io/modules/http-client-wrapper";
+
 import module namespace credentials =
     "http://www.28msec.com/modules/credentials";
 
@@ -16,23 +14,11 @@ declare %private variable $ml:UNSUPPORTED_BODY as QName :=
     QName("ml:UNSUPPORTED_BODY");
 
 declare %private function ml:parse-sequence(
-    $multipart as string,
-    $content-type as string
+    $parts as object*
 ) as item* {
-    let $values := tokenize($content-type, ";") !
-                    {|
-                        let $tokens := tokenize($$, "=")
-                        return { fn:normalize-space($tokens[1]): $tokens[2] }
-                    |}
-    let $boundary := $values("boundary")
-    let $parts := tokenize($multipart, $boundary) ! $$
     for $part in $parts
-    let $lines := tokenize($part, "\n")
-    let $lines := subsequence($lines, 2)
-    let $lines := subsequence($lines, 1, count($lines) - 1)
-    where exists($lines)
-    let $primitive := tokenize($lines[2], ":")[2] ! normalize-space($$)
-    let $value := string-join(subsequence($lines, 3), "\n")
+    let $primitive := $part.headers("X-Primitive")
+    let $value := $part.body.content
     let $item :=
         switch($primitive)
         case "integer" return integer($value)
@@ -143,8 +129,8 @@ declare %private function ml:response(
     return
         if(contains($media, "json")) then
             parse-json($response.body.content)
-        else if(contains($media, "multipart")) then
-            ml:parse-sequence(base64:decode($response.body.content), $response.headers("Content-Type"))
+        else if($response.multipart) then
+            ml:parse-sequence($response.multipart.parts[])
         else
             $response.body.content
 };
@@ -241,7 +227,6 @@ as object*
         { collection: $collection, pageLength: 10000 },
         { "$query" : $query },
         { Accept: "application/json" })
-    let $response := trace($response, "$response")
     for $href in $response.results[].href
     return ml:send-deterministic-request($name, $href)
 };
@@ -257,12 +242,12 @@ declare function ml:simple-query(
     $name as string,
     $query as string
 ) as item* {
-    ml:send-deterministic-request($name, "/eval", "POST", (), "xquery=" || $query, { "Content-Type": "application/x-www-form-urlencoded" })
+    ml:send-deterministic-request($name, "/eval", "POST", { pageLength: 10000 }, "xquery=" || $query, { "Content-Type": "application/x-www-form-urlencoded" })
 };
 
 declare %an:sequential function ml:query(
     $name as string,
     $query as string
 ) as item* {
-    ml:send-request($name, "/eval", "POST", (), "xquery=" || $query, { "Content-Type": "application/x-www-form-urlencoded" })
+    ml:send-request($name, "/eval", "POST", { pageLength: 10000 }, "xquery=" || $query, { "Content-Type": "application/x-www-form-urlencoded" })
 };
