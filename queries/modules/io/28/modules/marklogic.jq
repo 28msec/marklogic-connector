@@ -234,16 +234,12 @@ declare function ml:qbe(
     $query as object)
 as object*
 {
-    let $response := ml:send-deterministic-request(
+    ml:send-deterministic-request(
         $name,
         "/qbe",
         "POST",
         { collection: $collection, pageLength: 10000 },
-        { "$query" : $query },
-        { Accept: "application/json" })
-    let $response := trace($response, "$response")
-    for $href in $response.results[].href
-    return ml:send-deterministic-request($name, $href)
+        { "$query" : $query })
 };
 
 declare function ml:count(
