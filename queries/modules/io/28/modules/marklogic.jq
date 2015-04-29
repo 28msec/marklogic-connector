@@ -22,6 +22,25 @@ declare %private function ml:parse-sequence(
     let $item :=
         switch($primitive)
         case "integer" return integer($value)
+        case "string"  return string($value)
+        case "anyURI"  return anyURI($value)
+        case "QName"   return QName($value)
+        case "boolean" return boolean($value)
+        case "decimal" return decimal($value)
+        case "double"  return double($value)
+        case "float"   return float($value)
+        case "base64Binary" return base64Binary($value)
+        case "date" return date($value)
+        case "dateTime" return dateTime($value)
+        case "time" return time($value)
+        case "gMonth" return gMonth($value)
+        case "gMonthDay" return gMonthDay($value)
+        case "gYear" return gYear($value)
+        case "gYearMonth" return gYearMonth($value)
+        case "duration" return duration($value)
+        case "dayTimeDuration" return dayTimeDuration($value)
+        case "yearMonthDuration" return yearMonthDuration($value)
+        case "node-object" return parse-json($value)
         default return $value
     return $item
 };
@@ -226,9 +245,9 @@ as object*
         "POST",
         { collection: $collection, pageLength: 10000 },
         { "$query" : $query },
-        { Accept: "application/json" })
-    for $href in $response.results[].href
-    return ml:send-deterministic-request($name, $href)
+        { Accept: "multipart/mixed; boundary=DEFAULT_BOUNDARY_14201231297125830186" }
+    )
+    return { foo: $response }
 };
 
 declare function ml:count(

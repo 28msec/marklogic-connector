@@ -6,6 +6,8 @@ import module namespace http-impl = "http://zorba.io/modules/http-client";
 
 declare namespace ver = "http://zorba.io/options/versioning";
 
+declare variable $http:default-boundary := "multipart/mixed; boundary=DEFAULT_BOUNDARY_14201231297125830186";
+
 declare %an:sequential function http:send-request($request as object) as object
 {
     let $response := http-impl:send-request($request)
@@ -43,11 +45,17 @@ declare %private function http:response($response as object) as object {
 
 declare %private function http:parse-multipart($body as base64Binary, $content-type as string) as object {
     let $body := base64:decode($body)
+    let $content-type :=
+        if(contains($content-type, "multipart")) then
+            $content-type
+        else
+            $http:default-boundary
     let $values := tokenize($content-type, ";") !
                     {|
                         let $tokens := tokenize($$, "=")
                         return { fn:normalize-space($tokens[1]): $tokens[2] }
                     |}
+    let $values := $values
     let $boundary := "--" || $values("boundary")
     let $parts :=
         let $parts := tokenize($body, $boundary)
@@ -67,7 +75,10 @@ declare %private function http:parse-multipart($body as base64Binary, $content-t
             headers: {| $headers |},
             body: {
                 "media-type": $headers("Content-Type"),
-                content: $tokens[2]
+                content: if(contains($headers("Content-Type"), "json")) then
+                    parse-json($tokens[2])
+                else
+                    $tokens[2]
             }
         }
     return {
