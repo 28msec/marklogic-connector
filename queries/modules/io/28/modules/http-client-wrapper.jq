@@ -75,10 +75,7 @@ declare %private function http:parse-multipart($body as base64Binary, $content-t
             headers: {| $headers |},
             body: {
                 "media-type": $headers("Content-Type"),
-                content: if(contains($headers("Content-Type"), "json")) then
-                    parse-json($tokens[2])
-                else
-                    $tokens[2]
+                content: $tokens[2]
             }
         }
     return {

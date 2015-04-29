@@ -41,7 +41,12 @@ declare %private function ml:parse-sequence(
         case "dayTimeDuration" return dayTimeDuration($value)
         case "yearMonthDuration" return yearMonthDuration($value)
         case "node-object" return parse-json($value)
-        default return $value
+        default return
+            if(contains($part.body("media-type"), "xml")) then
+                parse-xml($value)
+            else if(contains($part.body("media-type"), "json")) then
+                parse-json($value)
+            else $value
     return $item
 };
 
