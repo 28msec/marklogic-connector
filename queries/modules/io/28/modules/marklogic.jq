@@ -238,7 +238,7 @@ as object*
         $name,
         "/qbe",
         "POST",
-        { collection: $collection },
+        { collection: $collection, pageLength: 10000 },
         { "$query" : $query },
         { Accept: "application/json" })
     let $response := trace($response, "$response")
