@@ -10,6 +10,7 @@ var VFS = require('28').VFS;
 var _ = require('lodash');
 var minimist = require('minimist');
 var runSequence = require('run-sequence');
+var request = require('request');
 
 var Config = require('./config');
 
@@ -236,9 +237,21 @@ var runQueriesInParallel = function(projectName, queriesToRun) {
                 accept: 'application/28.io+json',
                 queryPath: nextQuery,
                 format: '',
-                token: projectToken
+                token: projectToken,
+                trace: true
             }).then(function (data) {
                 $.util.log($.util.colors.green('✓ ') + nextQuery + ' returned with status code: ' + data.response.statusCode);
+                var traceFile = data.response.headers['x-28msec-trace'];
+                setTimeout(function(){
+                    request({
+                        uri: traceFile,
+                        method: 'GET'
+                    }, function(error, response, body){
+                        if(body) {
+                            console.log(body.green);
+                        }
+                    });
+                }, 1000);
                 return credentials;
             }).catch(function (error) {
                 var requestUri = error.response.request.uri;
