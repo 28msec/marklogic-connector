@@ -1,3 +1,4 @@
+jsoniq version "1.0";
 module namespace ml = "http://28.io/modules/marklogic";
 
 import module namespace http =
@@ -252,7 +253,7 @@ as object*
         { "$query" : $query },
         { Accept: "multipart/mixed; boundary=DEFAULT_BOUNDARY_14201231297125830186" }
     )
-    return { foo: $response }
+    return $response
 };
 
 declare function ml:count(

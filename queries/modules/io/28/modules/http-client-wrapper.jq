@@ -1,3 +1,4 @@
+jsoniq version "1.0";
 module namespace http = "http://28.io/modules/http-client-wrapper";
 
 import module namespace base64 = "http://zorba.io/modules/base64";
