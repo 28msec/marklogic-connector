@@ -53,14 +53,14 @@ declare %private function ml:parse-sequence(
 
 declare %an:sequential %private function ml:send-request(
     $name as string,
-    $path as string) as object {
+    $path as string) as item* {
     ml:send-request($name, $path, "POST")
 };
 
 declare %an:sequential %private function ml:send-request(
     $name as string,
     $path as string,
-    $method as string) as object {
+    $method as string) as item* {
     ml:send-request($name, $path, $method, ())
 };
 
@@ -68,7 +68,7 @@ declare %an:sequential %private function ml:send-request(
     $name as string,
     $path as string,
     $method as string,
-    $query-parameters as object?) as object {
+    $query-parameters as object?) as item* {
     ml:send-request($name, $path, $method, $query-parameters, ())
 };
 
@@ -77,7 +77,7 @@ declare %an:sequential %private function ml:send-request(
     $path as string,
     $method as string,
     $query-parameters as object?,
-    $body as item?) as object {
+    $body as item?) as item* {
     ml:send-request($name, $path, $method, $query-parameters, $body, ())
 };
 
@@ -87,7 +87,7 @@ declare %an:sequential %private function ml:send-request(
       $method as string,
       $query-parameters as object?,
       $body as item?,
-      $headers as object?) as object {
+      $headers as object?) as item* {
     let $request :=
       ml:request($name, $path, $method, $query-parameters, $body, $headers)
     let $response := http:send-request($request)
@@ -120,7 +120,7 @@ declare %private function ml:send-deterministic-request(
       $path as string,
       $method as string,
       $query-parameters as object?,
-      $body as item?) as object {
+      $body as item?) as item* {
     ml:send-deterministic-request($name, $path, $method, $query-parameters, $body, ())
 };
 
