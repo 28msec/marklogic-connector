@@ -142,7 +142,9 @@ declare %private function ml:response(
     $response as object
 ) as item* {
     switch($response.status)
-    case 200 return
+    case 200
+    case 204
+        return
         let $media := $response.body("media-type")
         return
             if(contains($media, "json")) then
