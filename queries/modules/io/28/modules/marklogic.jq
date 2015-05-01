@@ -136,6 +136,13 @@ declare %private function ml:send-deterministic-request(
       http:send-deterministic-request($request)
     return switch($response.status)
            case 200 return ml:response($response)
+};
+
+declare %private function ml:response(
+    $response as object
+) as item* {
+    
+    
            case 400 return error(QName("ml:BAD_REQUEST"), "Unsupported or invalid parameters, or missing required parameters.", $response)
            case 401 return error(QName("ml:UNAUTHORIZED"), "User is not authorized.", $response)
            case 403 return error(QName("ml:FORBIDDEN"), "User does not have access to this resource.", $response)
@@ -145,11 +152,7 @@ declare %private function ml:send-deterministic-request(
            case 412 return error(QName("ml:PRECONDITION_FAILED"), "A non-syntactic part of the request was rejected. For example, an empty POST or PUT body.", $response)
            case 415 return error(QName("ml:UNSUPPORTED_MEDIA_TYPE"), "A PUT or POST payload cannot be accepted.", $response)
            default return error(QName("ml:UNKNOWN_ERROR"), "Unknown error (status " || $response.status || ")", $response)
-};
-
-declare %private function ml:response(
-    $response as object
-) as item* {
+           
     let $media := $response.body("media-type")
     return
         if(contains($media, "json")) then
