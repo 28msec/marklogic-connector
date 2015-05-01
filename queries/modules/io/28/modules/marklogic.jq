@@ -201,11 +201,11 @@ declare %private function ml:request(
                     body: {|
                           typeswitch($body)
                           case json-item return {
-                              "media-type" : "application/json;charset=UTF-8",
+                              "media-type" : ($headers("Content-Type"), "application/json;charset=UTF-8")[1],
                               "content" : serialize($body)
                           }
                           case string return {
-                              "media-type": "application/x-www-form-urlencoded",
+                              "media-type": ($headers("Content-Type"), "text/plain")[1],
                               "content": $body
                           }
                           default return error($ml:UNSUPPORTED_BODY)
