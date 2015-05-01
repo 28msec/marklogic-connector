@@ -90,7 +90,8 @@ declare %an:sequential %private function ml:send-request(
       $headers as object?) as object {
     let $request :=
       ml:request($name, $path, $method, $query-parameters, $body, $headers)
-    return http:send-request($request)
+    let $response := http:send-request($request)
+    return ml:response($response)
 };
 
 declare %private function ml:send-deterministic-request(
@@ -134,33 +135,31 @@ declare %private function ml:send-deterministic-request(
       ml:request($name, $path, $method, $query-parameters, $body, $headers)
     let $response :=
       http:send-deterministic-request($request)
-    return switch($response.status)
-           case 200 return ml:response($response)
+    return ml:response($response)
 };
 
 declare %private function ml:response(
     $response as object
 ) as item* {
-    
-    
-           case 400 return error(QName("ml:BAD_REQUEST"), "Unsupported or invalid parameters, or missing required parameters.", $response)
-           case 401 return error(QName("ml:UNAUTHORIZED"), "User is not authorized.", $response)
-           case 403 return error(QName("ml:FORBIDDEN"), "User does not have access to this resource.", $response)
-           case 404 return error(QName("ml:NOT_FOUND"), "No matching pattern for incoming URI.", $response)
-           case 405 return error(QName("ml:METHOD_NOT_ALLOWED"), "The service does not support the HTTP method used by the client.", $response)
-           case 406 return error(QName("ml:UNACCEPTABLE_TYPE"), "Unable to provide content type matching the client's Accept header.", $response)
-           case 412 return error(QName("ml:PRECONDITION_FAILED"), "A non-syntactic part of the request was rejected. For example, an empty POST or PUT body.", $response)
-           case 415 return error(QName("ml:UNSUPPORTED_MEDIA_TYPE"), "A PUT or POST payload cannot be accepted.", $response)
-           default return error(QName("ml:UNKNOWN_ERROR"), "Unknown error (status " || $response.status || ")", $response)
-           
-    let $media := $response.body("media-type")
-    return
-        if(contains($media, "json")) then
-            parse-json($response.body.content)
-        else if($response.multipart) then
-            ml:parse-sequence($response.multipart.parts[])
-        else
-            $response.body.content
+    switch($response.status)
+    case 200 return
+        let $media := $response.body("media-type")
+        return
+            if(contains($media, "json")) then
+                parse-json($response.body.content)
+            else if($response.multipart) then
+                ml:parse-sequence($response.multipart.parts[])
+            else
+                $response.body.content
+       case 400 return error(QName("ml:BAD_REQUEST"), "Unsupported or invalid parameters, or missing required parameters.", $response)
+       case 401 return error(QName("ml:UNAUTHORIZED"), "User is not authorized.", $response)
+       case 403 return error(QName("ml:FORBIDDEN"), "User does not have access to this resource.", $response)
+       case 404 return error(QName("ml:NOT_FOUND"), "No matching pattern for incoming URI.", $response)
+       case 405 return error(QName("ml:METHOD_NOT_ALLOWED"), "The service does not support the HTTP method used by the client.", $response)
+       case 406 return error(QName("ml:UNACCEPTABLE_TYPE"), "Unable to provide content type matching the client's Accept header.", $response)
+       case 412 return error(QName("ml:PRECONDITION_FAILED"), "A non-syntactic part of the request was rejected. For example, an empty POST or PUT body.", $response)
+       case 415 return error(QName("ml:UNSUPPORTED_MEDIA_TYPE"), "A PUT or POST payload cannot be accepted.", $response)
+       default return error(QName("ml:UNKNOWN_ERROR"), "Unknown error (status " || $response.status || ")", $response)
 };
 
 declare %private function ml:request(
