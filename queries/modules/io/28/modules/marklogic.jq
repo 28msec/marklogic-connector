@@ -249,33 +249,13 @@ declare function ml:qbe(
     $query as object)
 as object*
 {
-    ml:qbe($name, $collection, $query, 1, 10000)
-};
-
-declare function ml:qbe(
-    $name as string,
-    $collection as string,
-    $query as object,
-    $offset as integer,
-    $limit as integer)
-as object*
-{
     let $response := ml:send-deterministic-request(
         $name,
         "/qbe",
         "POST",
-        {
-            collection: $collection,
-            start: $offset,
-            pageLength: $limit
-        },
-        {
-            "$query" : $query
-        },
-        {
-          Accept:
-            "multipart/mixed; boundary=DEFAULT_BOUNDARY_14201231297125830186"
-        }
+        { collection: $collection, pageLength: 10000 },
+        { "$query" : $query },
+        { Accept: "multipart/mixed; boundary=DEFAULT_BOUNDARY_14201231297125830186" }
     )
     return $response
 };
