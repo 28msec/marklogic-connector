@@ -284,7 +284,7 @@ declare function ml:count(
     $name as string,
     $collection as string
 ) as integer {
-    ml:simple-query($name, "count(collection(\"" || $collection || "\"))")
+    ml:simple-query($name, "cts:count-aggregate(cts:uri-reference(),(),cts:collection-query(\"" || $collection || "\"))")
 };
 
 declare function ml:simple-query(
