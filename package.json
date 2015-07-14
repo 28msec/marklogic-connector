@@ -1,14 +1,14 @@
 {
-  "name": "marklogic-connector",
+  "name": "yidb-connector",
   "version": "0.0.1",
-  "description": "JSONiq Connector for MarkLogic",
+  "description": "JSONiq Connector for YiDB",
   "main": "index.js",
   "scripts": {
     "test": "gulp"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/28msec/marklogic-connector.git"
+    "url": "https://github.com/28msec/yidb-connector.git"
   },
   "keywords": [
     "jsoniq",
@@ -19,9 +19,9 @@
   "author": "28msec <hello@28.io> (http://28.io)",
   "license": "Apache 2",
   "bugs": {
-    "url": "https://github.com/28msec/marklogic-connector/issues"
+    "url": "https://github.com/28msec/yidb-connector/issues"
   },
-  "homepage": "https://github.com/28msec/marklogic-connector",
+  "homepage": "https://github.com/28msec/yidb-connector",
   "devDependencies": {
     "28": "^1.9.1",
     "glob-expand": "^0.1.0",

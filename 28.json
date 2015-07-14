@@ -1,7 +1,7 @@
 {
-  "name": "marklogic-connector",
+  "name": "yidb-connector",
   "engines": {
     "28.io": ">=4.1.0"
   },
-  "exports": ["http://28.io/modules/marklogic", "http://28.io/modules/http-client-wrapper"]
+  "exports": ["http://28.io/modules/yidb", "http://28.io/modules/http-client-wrapper"]
 }
