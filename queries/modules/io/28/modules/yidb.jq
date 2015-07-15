@@ -4,9 +4,6 @@ module namespace yi = "http://28.io/modules/yidb";
 import module namespace http =
     "http://28.io/modules/http-client-wrapper";
 
-import module namespace string =
-    "http://zorba.io/modules/string";
-
 import module namespace credentials =
     "http://www.28msec.com/modules/credentials";
 
@@ -138,7 +135,7 @@ declare %private function yi:send-deterministic-request(
       yi:request($name, $path, $method, $query-parameters, $body, $headers)
     let $response :=
       http:send-deterministic-request($request)
-    return trace(yi:response($response), "response")
+    return yi:response($response)
 };
 
 declare %private function yi:response(
@@ -151,7 +148,7 @@ declare %private function yi:response(
         let $media := $response.body("media-type")
         return
             if(contains($media, "json")) then
-                parse-json(string($response.body.content))
+                parse-json($response.body.content)
             else if($response.multipart) then
                 yi:parse-sequence($response.multipart.parts[])
             else
@@ -231,91 +228,9 @@ as ()
 
 declare function yi:repositories(
     $connection as string)
-as object*
+as string*
 {
-    yi:send-deterministic-request($connection, "/repositories", "GET").result[]
-};
-
-declare function yi:repository(
-    $connection as string,
-    $repository as string)
-as object*
-{
-    yi:send-deterministic-request($connection, "/repositories/"||$repository, "GET").result[]
-};
-
-declare function yi:metadata(
-    $connection as string,
-    $repository as string)
-as object*
-{
-    yi:send-deterministic-request($connection, "/repositories/"||$repository||"/metadata", "GET").result[]
-};
-
-declare function yi:metatype(
-    $connection as string,
-    $repository as string,
-    $metatype as string)
-as object*
-{
-    yi:send-deterministic-request($connection, "/repositories/"||$repository||"/metadata/"||$metatype, "GET").result[]
-};
-
-declare function yi:indexes(
-    $connection as string,
-    $repository as string,
-    $metatype as string)
-as object*
-{
-    yi:send-deterministic-request($connection, "/repositories/"||$repository||"/metadata/"||$metatype||"/indexes", "GET").result[]
-};
-
-declare function yi:branches(
-    $connection as string,
-    $repository as string)
-as object*
-{
-    yi:send-deterministic-request($connection, "/repositories/"||$repository||"/branches", "GET").result[]
-};
-
-declare function yi:branch(
-    $connection as string,
-    $repository as string,
-    $branch as string)
-as object*
-{
-    yi:send-deterministic-request($connection, "/repositories/"||$repository||"/branches/"||$branch, "GET").result[]
-};
-
-declare function yi:entities(
-    $connection as string,
-    $repository as string,
-    $branch as string,
-    $metatype as string)
-as object*
-{
-    yi:send-deterministic-request($connection, "/repositories/"||$repository||"/branches/"||$branch||"/"||$metatype, "GET").result[]
-};
-
-declare function yi:entity(
-    $connection as string,
-    $repository as string,
-    $branch as string,
-    $metatype as string,
-    $oid as string)
-as object*
-{
-    yi:send-deterministic-request($connection, "/repositories/"||$repository||"/branches/"||$branch||"/"||$metatype||"/"||$oid, "GET").result[]
-};
-
-declare function yi:query(
-    $connection as string,
-    $repository as string,
-    $branch as string,
-    $query as string)
-as object*
-{
-    yi:send-deterministic-request($connection, "/repositories/"||$repository||"/branches/"||$branch||"/query/"||$query, "GET").result[]
+    yi:send-deterministic-request($connection, "/repositories", "GET");
 };
 
 declare function yi:document(
