@@ -6,6 +6,6 @@ dependencies:
     - npm install -g gulp
 test:
   override:
-    - gulp setup --build-id="yidb-$CIRCLE_BUILD_NUM"
+    - gulp setup --build-id="ml-$CIRCLE_BUILD_NUM"
   post:
-    - gulp teardown --build-id="yidb-$CIRCLE_BUILD_NUM"
+    - gulp teardown --build-id="ml-$CIRCLE_BUILD_NUM"

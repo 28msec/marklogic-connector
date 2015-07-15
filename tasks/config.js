@@ -41,7 +41,7 @@ gulp.task('config:load', ['crypt:decrypt'], function(){
         return;
     }
     config.credentials = JSON.parse(fs.readFileSync(config.paths.unencryptedConfigFile, 'utf-8'));
-    config.projectName = 'yidb-' + buildId;
+    config.projectName = 'ml-' + buildId;
 
     $.util.log('Portal: ' + $.util.colors.green(config.credentials['28'].portal));
     $.util.log('Project: ' + $.util.colors.green(config.projectName));
