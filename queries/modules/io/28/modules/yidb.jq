@@ -230,7 +230,7 @@ declare function yi:repositories(
     $connection as string)
 as string*
 {
-    yi:send-deterministic-request($connection, "/repositories", "Get");
+    yi:send-deterministic-request($connection, "/repositories", "GET");
 };
 
 declare function yi:document(
